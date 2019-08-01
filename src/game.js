@@ -1,36 +1,43 @@
 kontra.init();
 
-var sprite = kontra.sprite({
-  x: 100,
-  y: 50,
-  width: 50,
-  height: 100,
-  color: "green",
-  dx: 1,
-  dy: 0.5
-});
+kontra.assetPaths.images = "assets/images/";
 
-var loop = kontra.gameLoop({
-  update: function() {
-    sprite.update();
-    console.log(sprite.x);
+let image = new Image();
 
-    if (sprite.x + sprite.width == 256) {
-      sprite.dx = -1;
-    } else if (sprite.x == 0) {
-      sprite.dx = 1;
-    }
+kontra
+  .loadAssets("map3.png", "runright1.png", "runleft1.png", "run.png")
+  .then(function() {
+    var background = kontra.sprite({
+      x: 0,
+      y: 0,
+      image: kontra.images.map3
+    });
 
-    if (sprite.y + sprite.height == 256) {
-      sprite.dy = -0.5;
-    } else if (sprite.y == 0) {
-      sprite.dy = 0.5;
-    }
-  },
+    var player = kontra.sprite({
+      x: 50,
+      y: 50,
+      image: kontra.images.runright1
+    });
 
-  render: function() {
-    sprite.render();
-  }
-});
+    var loop = kontra.gameLoop({
+      update: function() {
+        if (kontra.keys.pressed("up")) {
+          player.y -= 1;
+        }
 
-loop.start();
+        if (kontra.keys.pressed("down")) {
+          player.y += 1;
+        }
+
+        background.update();
+        player.update();
+      },
+
+      render: function() {
+        background.render();
+        player.render();
+      }
+    });
+
+    loop.start();
+  });
